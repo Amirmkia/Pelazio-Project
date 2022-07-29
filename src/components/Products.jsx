@@ -1,11 +1,18 @@
-import React from "react";
-import { Col } from "react-bootstrap";
+import {Component} from "react";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import { connect } from "react-redux";
-import { addFavoriteTerm, removeFavoriteTerm } from "./actions";
-import "./App.css";
+import { addFavoriteTerm, removeFavoriteTerm } from "../actions/index";
+import "../../src/App.css";
+import { Col } from "react-bootstrap";
+import RealProducts from './RealProducts';
+import FavoriteProducts from "./FavoriteProducts";
+import Table from 'react-bootstrap/Table';
+
+
+
+
 const mapStateToProps = (state) => {
   return {
     terms: state.terms,
@@ -13,79 +20,66 @@ const mapStateToProps = (state) => {
   };
 };
 
-class Lists extends React.Component {
+
+class Products extends Component {
+
   state = {
     showFavorites: false,
   };
 
-  toggleFavorites() {
+  toggleFavorites = () => {
     this.setState({ showFavorites: true });
   }
-  toggleJargon() {
+  toggleCards = () => {
     this.setState({ showFavorites: false });
   }
 
   render() {
     if (this.state.showFavorites) {
       return (
-        <div>
+        <>
           <h1 className="App">Pelazio Project</h1>
-          <div>
-            <button
-              onClick={() => {
-                this.toggleJargon();
-              }}
-            >
-              {" "}
-              Show Product List
-            </button>
-          </div>
-
+          <RealProducts clickMe = {this.toggleCards} />
           {this.props.favorites.map((term, index) => {
             return (
-              <Col key={index} md={4} lg={4} xs={1}>
-                <Card>
-                  <Card.Img variant="top" src={term.image} />
-                  <Card.Body>
-                    <Card.Title>{term.title}</Card.Title>
-                    <Card.Text>{term.description}</Card.Text>
-                    <Button
-                      variant="danger"
-                      onClick={() =>
-                        this.props.dispatch(removeFavoriteTerm(term.title))
-                      }
-                    >
-                      Remove
-                    </Button>
-                  </Card.Body>
-                </Card>
-              </Col>
+              <Table striped bordered hover size="sm">
+              <thead>
+                <tr>
+                  <th>id</th>
+                  <th>Title</th>
+                  <th>Price</th>
+                  <th>Remove</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{index}</td>
+                  <td>{term.title}</td>
+                  <td>{term.price}</td>
+                  <td><Button variant = "danger" onClick = {() =>
+                     this.props.dispatch(removeFavoriteTerm(term.title))}>Remove</Button>
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
             );
           })}
-        </div>
+        </>
       );
     } else
       return (
-        <div>
+        <>
           <h1 className="App">Pelazio project</h1>
-          <div>
-            <button
-              onClick={() => {
-                this.toggleFavorites();
-              }}
-            >
-              {" "}
-              Show My Card
-            </button>
-          </div>
+          <FavoriteProducts clickMe = {this.toggleFavorites} />
           {this.props.terms.map((term, index) => {
             return (
-              <Col key={index} md={4} lg={4}>
-                <Card>
+              <Col>
+                <Card className="box" key={index}>
                   <Card.Img variant="top" src={term.image} />
                   <Card.Body>
                     <Card.Title>{term.title}</Card.Title>
                     <Card.Text>{term.description}</Card.Text>
+                    <Card.Footer>Price : {term.price}</Card.Footer>
                     <Button
                       variant="primary"
                       onClick={() =>
@@ -106,9 +100,9 @@ class Lists extends React.Component {
               </Col>
             );
           })}
-        </div>
+        </>
       );
   }
 }
 
-export default connect(mapStateToProps, null)(Lists);
+export default connect(mapStateToProps, null)(Products);

@@ -11,6 +11,7 @@ export default function favoritesReducer(state = [], action) {
         }
         return false;
       });
+
     default:
       return state;
   }
